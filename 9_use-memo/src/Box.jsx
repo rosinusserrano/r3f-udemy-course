@@ -1,30 +1,33 @@
-import { useFrame } from "@react-three/fiber"
-import { useRef, useState } from "react"
+import { useFrame } from '@react-three/fiber'
+import { useRef, useState, useMemo } from 'react'
+import * as THREE from 'three'
 
 export default function Box(props) {
   const ref = useRef()
-  const [rotate, setRotate] = useState(false)
-  const [hovered, setHover] = useState(false)
 
+  const [geometryIndex, setGeometryIndex] = useState(0)
+  const geometries = useMemo(() => [
+    new THREE.BoxGeometry(),
+    new THREE.ConeGeometry(),
+    new THREE.SphereGeometry(0.75),
+    new THREE.LatheGeometry()
+  ], [])
 
   useFrame((_, delta) => {
-    if (rotate) {
-      ref.current.rotation.x += props.xRot * delta
-      ref.current.rotation.x %= 2 * Math.PI
-      ref.current.rotation.y += props.yRot * delta
-      ref.current.rotation.y %= 2 * Math.PI
-    }
+    ref.current.rotation.x += delta
+    ref.current.rotation.y += 0.3 * delta
   })
 
   return (
-    <mesh {...props} ref={ref}
-      onPointerDown={() => setRotate(true)}
-      onPointerUp={() => setRotate(false)}
-      onPointerOver={() => setHover(true)}
-      onPointerOut={() => setHover(false)}
-      scale={hovered ? 1.2 : 1}>
-      <boxGeometry />
-      <meshBasicMaterial color={hovered ? 0x00ff00 : 0xff0000} wireframe />
+    <mesh
+      {...props}
+      ref={ref}
+      onPointerDown={() => {
+        setGeometryIndex((geometryIndex + 1) % geometries.length)
+      }}
+      scale={1}
+      geometry={geometries[geometryIndex]}>
+      <meshBasicMaterial color={'lime'} wireframe />
     </mesh>
   )
 }
