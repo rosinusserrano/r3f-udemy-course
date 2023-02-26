@@ -22,6 +22,7 @@ export default function App() {
         maxAzimuthAngle={Math.PI / 4}
         minPolarAngle={Math.PI / 6}
         maxPolarAngle={Math.PI - Math.PI / 6}></OrbitControls>
+      <axesHelper /> 
     </Canvas>
   )
 }
